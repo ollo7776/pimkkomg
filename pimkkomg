@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+    integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <!-- Bootstrap 4 -->
+  <link rel="stylesheet" href="/path/to/bootstrap.min.css">
+
+</head>
+<style>
+  canvas {
+    border: 1px solid #d3d3d3;
+    background-color: #f1f1f1;
+  }
+</style>
+
+<body>
+  <!-- DropDown menu -->
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" href="index.html">Home</a>
+    </li>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+        aria-expanded="false">Übungen</a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="pucko.html">Lungen Übung</a>
+        <a class="dropdown-item" href="geog.html">Geofiction</a>
+        <a class="dropdown-item" href="pimkkong.html">PimkKong</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="db1.html">DB1</a>
+      </div>
+    </li>
+  </ul>
+  <!-- Banner Cat Elisa -->
+
+  <div class="jumbotron jumbotron-fluid bg-info text-white text-center">
+    <div class="container">
+      <h1 class="display-4">Welcome to Cat Elisa 1315</h1>
+      <p class="lead">With a cat you can catch...</p>
+    </div>
+  </div>
+
+  <!-- PimkKonk Play -->
+  <div class="container">
+    <p>You can also use the up and down keys on the keyboard</p> 
+    <body onload="startGame()">
+      <canvas id="canvas">
+
+      </canvas>
+      <!-- Buttons UP and down-->
+      </br><button type="button" class="btn btn-lg btn-primary" onmousedown="moveup()" onmouseup="clearmove()"
+        ontouchstart="moveup()">UP</button>
+      <button type="button" class="btn btn-lg btn-primary" onmousedown="movedown()" onmouseup="clearmove()"
+        ontouchstart="movedown()">DOWN</button><br>
+      <h3>No panic it's only a game. Try to get three points! </h3>
+    </body>
+
+</html>
+
+<script>
+  var myGamePiece;
+  var myGameBall;
+  var myScore;
+
+  function startGame() {
+    myGamePiece = new component(10, 100, "grey", 10, 150);
+    myGameBall = new component(10, 10, "grey", 150, 150);
+    myScore = new component(20, 20, "grey", 400, 15, "text");
+    myGameArea.start();
+  }
+
+  var myGameArea = {
+    canvas: document.getElementById("canvas"),
+    start: function () {
+      this.canvas.width = 480;
+      this.canvas.height = 270;
+      this.context = this.canvas.getContext("2d");
+      //document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+      //this.frameNo = 0;
+      this.interval = setInterval(updateGameArea, 20);
+      window.addEventListener('keydown', function (e) {
+        e.preventDefault();
+        myGameArea.keys = (myGameArea.keys || []);
+        myGameArea.keys[e.keyCode] = (e.type == "keydown");
+      })
+      window.addEventListener('keyup', function (e) {
+        myGameArea.keys[e.keyCode] = (e.type == "keydown");
+      })
+    },
+    stop: function () {
+      clearInterval(this.interval);
+    },
+    clear: function () {
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+  }
+
+  function component(width, height, color, x, y, type) {
+
+    this.type = type;
+    this.width = width;
+    this.height = height;
+    this.speed = 0;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.speedChangeX = 0;
+    this.speedChangeY = 0;
+    this.x = x;
+    this.y = y;
+    this.hitNumber = 0;
+    this.update = function () {
+      ctx = myGameArea.context;
+      if (this.type == "text") {
+        ctx.font = this.width + " " + this.height;
+        ctx.fillStyle = color;
+        ctx.fillText(this.text, this.x, this.y);
+      } else {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.fillStyle = color;
+        ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+        ctx.restore();
+      }
+    }
+
+    this.newPos = function () {
+      this.y -= this.speed;
+    }
+
+    this.newPosBall = function () {
+      this.y += this.speedY;
+      this.y += this.speedChangeY
+      this.x += this.speedX;
+      this.x += this.speedChangeX;
+    }
+    this.newHit = function () {
+      this.hitNumber += this.hitNumber;
+    }
+  }
+
+  function updateGameArea() {
+    myGameArea.clear();
+    myScore.hitNumber += 0;
+    myGamePiece.speed = 0;
+    myGameBall.speedX = 2;
+    myGameBall.speedY = 2;
+    if (myGameArea.keys && myGameArea.keys[38]) { myGamePiece.speed = 2; }
+    if (myGameArea.keys && myGameArea.keys[40]) { myGamePiece.speed = -2; }
+    if (myGamePiece.y == 222) { myGamePiece.speed = 2; }
+    if (myGamePiece.y == 46) { myGamePiece.speed = -2; }
+    if (myGameBall.x == 490) { myGameBall.speedChangeX = -4 }
+    //if (myGameBall.x ==0){myGameBall.speedChangeX=0}
+    if (myGameBall.y == 270) { myGameBall.speedChangeY = -4 }
+    if (myGameBall.y == 0) { myGameBall.speedChangeY = 0 }
+
+    if (myScore.hitNumber != 2) {
+      if (myGameBall.x == 10 && (myGameBall.y > myGamePiece.y - 50
+        && myGameBall.y < myGamePiece.y + 50)) {
+        myGameBall.speedChangeX = 0;
+        myScore.hitNumber += 1;
+      }
+    } else
+      // if score is 2:
+      if (myGameBall.x == 30 && myGameBall.speedChangeX == -4) { myGameBall.speedChangeX = -2; myGameBall.speedChangeY = -7; }
+    if (myGameBall.y < 40 && myGameBall.speedChangeY == -7) {
+      if (myGamePiece.y < 110) {
+        myGameBall.speedChangeX = -2; myGameBall.speedChangeY = 3;
+      } else { myGameBall.speedChangeX = -5; myGameBall.speedChangeY = -5; }
+    }
+    if (myGameBall.x == 30 && myGameBall.y > 240 && myGameBall.speedChangeY == 3) { myGameBall.speedChangeX = -5; myGameBall.speedChangeY = -1; }
+
+    myGamePiece.newPos();
+    myGamePiece.update();
+    myGameBall.newPosBall();
+    myGameBall.update();
+    myScore.text = "SCORE: " + myScore.hitNumber;
+    myScore.update();
+  }
+
+  function moveup() {
+    myGamePiece.speed = 6;
+    myGamePiece.newPos();
+  }
+
+  function movedown() {
+    myGamePiece.speed = -6;
+    myGamePiece.newPos();
+  }
+</script>
+
+</div>
+
+<!-- jQuery first, then Tether, then Bootstrap JS. -->
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
+  integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
+  crossorigin="anonymous">    </script>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+  integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
